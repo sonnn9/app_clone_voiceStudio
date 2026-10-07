@@ -1,0 +1,8 @@
+[NARRATOR]
+Listen to the conversation at the café.
+
+[WAITER]
+Hello! What would you like to drink?
+
+[ANNA]
+A cup of tea, please.

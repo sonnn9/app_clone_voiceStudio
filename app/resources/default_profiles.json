@@ -1,0 +1,203 @@
+[
+  {
+    "name": "Story - Female Narrator",
+    "engine": "omnivoice",
+    "mode": "story",
+    "voice": {
+      "key": "archetype:feat_00_the_librarian",
+      "name": "The Librarian",
+      "instruct": "female, middle-aged, low pitch, british accent"
+    },
+    "speaker_voices": {},
+    "params": {
+      "speed": 1.0
+    },
+    "silence": {
+      "turn_ms": 300,
+      "paragraph_ms": 600,
+      "narrator_ms": 600,
+      "sentence_ms": 0
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Warm female narrator for stories."
+  },
+  {
+    "name": "Story - Male Narrator",
+    "engine": "omnivoice",
+    "mode": "story",
+    "voice": {
+      "key": "archetype:feat_03_the_storyteller",
+      "name": "The Storyteller",
+      "instruct": "male, elderly, low pitch, british accent"
+    },
+    "speaker_voices": {},
+    "params": {
+      "speed": 1.0
+    },
+    "silence": {
+      "turn_ms": 300,
+      "paragraph_ms": 600,
+      "narrator_ms": 600,
+      "sentence_ms": 0
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Elderly male storyteller."
+  },
+  {
+    "name": "English Lesson",
+    "engine": "omnivoice",
+    "mode": "auto",
+    "voice": {
+      "key": "archetype:feat_22_the_teacher",
+      "name": "The Teacher",
+      "instruct": "female, middle-aged, moderate pitch, american accent"
+    },
+    "speaker_voices": {
+      "NARRATOR": {
+        "key": "archetype:feat_22_the_teacher",
+        "name": "The Teacher",
+        "instruct": "female, middle-aged, moderate pitch, american accent"
+      },
+      "ANNA": {
+        "key": "archetype:feat_04_the_neighbor",
+        "name": "The Neighbor",
+        "instruct": "female, young adult, moderate pitch, american accent"
+      },
+      "TOM": {
+        "key": "archetype:feat_06_the_mate",
+        "name": "The Mate",
+        "instruct": "male, young adult, moderate pitch, australian accent"
+      }
+    },
+    "params": {
+      "speed": 0.95,
+      "language": "en"
+    },
+    "silence": {
+      "turn_ms": 400,
+      "paragraph_ms": 700,
+      "narrator_ms": 700,
+      "sentence_ms": 0
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Teacher narrator + student voices."
+  },
+  {
+    "name": "Kids Story",
+    "engine": "omnivoice",
+    "mode": "story",
+    "voice": {
+      "key": "archetype:feat_11_the_pixie",
+      "name": "The Pixie",
+      "instruct": "female, child, very high pitch"
+    },
+    "speaker_voices": {},
+    "params": {
+      "speed": 0.9
+    },
+    "silence": {
+      "turn_ms": 300,
+      "paragraph_ms": 800,
+      "narrator_ms": 600,
+      "sentence_ms": 150
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Bright child voice, slower with sentence pauses."
+  },
+  {
+    "name": "Conversation Male/Female",
+    "engine": "omnivoice",
+    "mode": "conversation",
+    "voice": {
+      "key": "archetype:feat_01_the_documentarian",
+      "name": "The Documentarian",
+      "instruct": "male, middle-aged, low pitch, american accent"
+    },
+    "speaker_voices": {
+      "NARRATOR": {
+        "key": "archetype:feat_01_the_documentarian",
+        "name": "The Documentarian",
+        "instruct": "male, middle-aged, low pitch, american accent"
+      },
+      "ANNA": {
+        "key": "archetype:feat_04_the_neighbor",
+        "name": "The Neighbor",
+        "instruct": "female, young adult, moderate pitch, american accent"
+      },
+      "TOM": {
+        "key": "archetype:feat_06_the_mate",
+        "name": "The Mate",
+        "instruct": "male, young adult, moderate pitch, australian accent"
+      }
+    },
+    "params": {
+      "speed": 1.0
+    },
+    "silence": {
+      "turn_ms": 300,
+      "paragraph_ms": 600,
+      "narrator_ms": 600,
+      "sentence_ms": 0
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Dialogue with distinct male/female voices."
+  },
+  {
+    "name": "News Reading",
+    "engine": "omnivoice",
+    "mode": "story",
+    "voice": {
+      "key": "archetype:feat_16_the_anchor",
+      "name": "The Anchor",
+      "instruct": "male, middle-aged, moderate pitch, american accent"
+    },
+    "speaker_voices": {},
+    "params": {
+      "speed": 1.0
+    },
+    "silence": {
+      "turn_ms": 300,
+      "paragraph_ms": 600,
+      "narrator_ms": 600,
+      "sentence_ms": 0
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Clear news anchor delivery."
+  },
+  {
+    "name": "Slow English Practice",
+    "engine": "omnivoice",
+    "mode": "auto",
+    "voice": {
+      "key": "archetype:feat_22_the_teacher",
+      "name": "The Teacher",
+      "instruct": "female, middle-aged, moderate pitch, american accent"
+    },
+    "speaker_voices": {
+      "NARRATOR": {
+        "key": "archetype:feat_22_the_teacher",
+        "name": "The Teacher",
+        "instruct": "female, middle-aged, moderate pitch, american accent"
+      }
+    },
+    "params": {
+      "speed": 0.8,
+      "language": "en"
+    },
+    "silence": {
+      "turn_ms": 600,
+      "paragraph_ms": 1000,
+      "narrator_ms": 800,
+      "sentence_ms": 300
+    },
+    "pronunciation": [],
+    "output_format": "",
+    "description": "Slow speed and long pauses for listening practice."
+  }
+]

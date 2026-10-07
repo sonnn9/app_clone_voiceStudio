@@ -1,0 +1,1246 @@
+You are a senior Python desktop application engineer.
+
+I want you to build a production-ready Windows desktop application for batch text-to-speech generation using my LOCAL AudioStudio API.
+
+The final application must be able to run as a Windows `.exe`.
+
+IMPORTANT:
+- AudioStudio runs locally on my computer.
+- Do NOT use any cloud TTS API unless explicitly requested.
+- Do NOT invent AudioStudio API endpoints, request parameters, voice IDs, models, or capabilities.
+- First inspect the AudioStudio local API documentation, Swagger/OpenAPI endpoint, source code, example curl commands, or API responses that I provide.
+- Design the AudioStudio integration as a separate adapter/module so API changes can easily be updated later.
+- The application GUI and source code should be clean, maintainable, and suitable for daily use.
+
+# 1. Recommended technology
+
+Use:
+
+- Python 3.11+
+- PySide6 for GUI
+- httpx or requests for HTTP API communication
+- pathlib for file/folder handling
+- concurrent.futures / QThreadPool / QThread for background jobs
+- pydub or ffmpeg when audio merging is required
+- JSON for app configuration
+- logging module for logs
+- PyInstaller or Nuitka for Windows EXE packaging
+
+Prefer PySide6 over Tkinter because I want a professional modern desktop interface.
+
+Use UTF-8 everywhere.
+
+The application must work correctly with Vietnamese and English text.
+
+# 2. Main purpose
+
+The application should generate audio through the local AudioStudio API for content such as:
+
+- Stories
+- Conversations
+- Dialogues
+- Lessons
+- Listening exercises
+- Narration
+- Individual TXT scripts
+- Entire folders containing TXT scripts
+
+The application should support both:
+
+1. Single-script generation
+2. Batch folder generation
+
+# 3. Folder processing
+
+Add a button:
+
+"Select Folder"
+
+When a folder is selected, recursively scan:
+
+*.txt
+
+including every subfolder.
+
+Example:
+
+D:\TTS
+    story1.txt
+    story2.txt
+    lesson1
+        conversation1.txt
+        conversation2.txt
+    lesson2
+        story3.txt
+
+The generated MP3 must be saved in the SAME folder as its source TXT file.
+
+Expected result:
+
+D:\TTS
+    story1.txt
+    story1.mp3
+    story2.txt
+    story2.mp3
+    lesson1
+        conversation1.txt
+        conversation1.mp3
+        conversation2.txt
+        conversation2.mp3
+    lesson2
+        story3.txt
+        story3.mp3
+
+Do not move all MP3 files into one central output folder unless the user selects that option.
+
+Provide output modes:
+
+- Same folder as TXT
+- Custom output folder while preserving source folder structure
+
+Default:
+Same folder as TXT.
+
+# 4. Recursive batch processing
+
+The batch engine must:
+
+- recursively discover TXT files
+- show all discovered files before generation
+- show relative folder path
+- allow individual files to be checked/unchecked
+- calculate total number of scripts
+- show status of every file
+
+Statuses:
+
+- Pending
+- Processing
+- Completed
+- Skipped
+- Failed
+- Cancelled
+
+Add:
+
+- Start
+- Pause
+- Resume
+- Cancel
+- Retry failed
+
+The UI must remain responsive while processing.
+
+# 5. TXT encoding
+
+Automatically support common encodings:
+
+- UTF-8
+- UTF-8 BOM
+- UTF-16 if possible
+
+If decoding fails, clearly report the file rather than crashing the whole batch.
+
+# 6. AudioStudio server settings
+
+Create a Settings page containing:
+
+AudioStudio API Base URL
+
+Example:
+
+http://127.0.0.1:xxxx
+
+Do NOT assume the actual port.
+
+Add:
+
+- Test Connection
+- API status indicator
+- server availability indicator
+- timeout setting
+- retry count
+- retry delay
+
+When clicking "Test Connection", clearly show:
+
+Connected / Not Connected
+
+If the API exposes model information, engine information, version information or GPU status, display them.
+
+# 7. Automatically load voices from AudioStudio
+
+This is extremely important.
+
+The app must retrieve the ACTUAL available voices from AudioStudio dynamically whenever the API supports it.
+
+Do not hard-code an incomplete list.
+
+I want access to ALL voices supported by the local AudioStudio installation.
+
+Display metadata when available:
+
+- Voice name
+- Voice ID
+- Male / Female
+- Language
+- Accent
+- Model
+- Engine
+- Style
+- Emotion
+- Age / character type if available
+
+Examples of useful filtering:
+
+Gender:
+- Male
+- Female
+- All
+
+Language:
+- English
+- Vietnamese
+- etc.
+
+Style / Emotion:
+- Neutral
+- Happy
+- Sad
+- Angry
+- Excited
+- Calm
+- Serious
+- Friendly
+- Storytelling
+- News
+- Conversational
+
+ONLY expose parameters that the actual AudioStudio API supports.
+
+If a model does not support emotion/style, disable those controls instead of sending unsupported parameters.
+
+# 8. Voice preview
+
+Add a voice preview feature.
+
+User selects a voice and enters a short test sentence.
+
+Example:
+
+"Hello. This is a voice preview."
+
+Button:
+
+Preview Voice
+
+Play generated audio directly inside the application.
+
+Allow:
+
+- Play
+- Stop
+- Replay
+
+Use a temporary preview directory and clean temporary files appropriately.
+
+# 9. Generation profiles
+
+Add reusable presets / profiles.
+
+Examples:
+
+Story - Female Narrator
+Story - Male Narrator
+English Lesson
+Kids Story
+Conversation Male/Female
+News Reading
+Slow English Practice
+
+A profile may contain:
+
+- model
+- voice
+- language
+- speed
+- pitch
+- volume
+- style
+- emotion
+- temperature
+- exaggeration
+- CFG
+- seed
+- any other parameters exposed by AudioStudio
+
+Again:
+
+DO NOT invent unsupported parameters.
+
+Only show/save parameters actually supported by the selected AudioStudio backend/model.
+
+Profiles must be saveable, editable, duplicable and deletable.
+
+Persist them to a JSON configuration file.
+
+# 10. Story mode
+
+Create a dedicated:
+
+STORY MODE
+
+For normal TXT files containing plain text.
+
+Example:
+
+Once upon a time, there was a small rabbit...
+
+The entire story should use the selected narrator voice.
+
+Allow:
+
+- voice
+- model
+- speed
+- emotion/style where supported
+- paragraph pause
+- sentence pause
+
+For long stories, automatically split the text into safe chunks according to the API/model limit.
+
+Do NOT split text in the middle of a word.
+
+Prefer splitting at:
+
+1. paragraph boundary
+2. sentence boundary
+3. punctuation
+4. safe length boundary
+
+Generate chunks independently and merge them into one final MP3.
+
+The output must still be:
+
+story1.mp3
+
+Temporary chunk files should be removed after a successful merge.
+
+# 11. Conversation mode
+
+Create a dedicated:
+
+CONVERSATION MODE
+
+A TXT file may contain multiple speakers.
+
+Support a simple script format such as:
+
+[NARRATOR]
+Today we are going to learn about travelling.
+
+[ANNA]
+Hi Tom! Where did you go last weekend?
+
+[TOM]
+I went to Da Nang with my family.
+
+[ANNA]
+Was it fun?
+
+[TOM]
+Yes! It was amazing.
+
+The application should detect speaker tags automatically.
+
+For every unique speaker, show:
+
+Speaker → Voice mapping
+
+Example:
+
+NARRATOR -> Female Voice A
+ANNA -> Female Voice B
+TOM -> Male Voice C
+
+Allow the user to select a different voice for each speaker.
+
+Persist speaker voice mappings as part of a profile.
+
+# 12. Conversation audio generation
+
+Generate each dialogue segment separately using the corresponding speaker voice.
+
+Then merge all segments into one MP3.
+
+Allow configurable silence:
+
+Between dialogue turns:
+default 300 ms
+
+Between paragraphs:
+default 600 ms
+
+Before narrator sections:
+configurable
+
+Expose these settings in the GUI.
+
+The merged result should retain natural pacing.
+
+# 13. Alternative dialogue syntax
+
+Design the parser so additional formats can easily be supported later.
+
+Optionally support:
+
+Anna: Hello.
+Tom: Hi Anna.
+
+in addition to:
+
+[ANNA]
+Hello.
+
+But implement this using a parser abstraction rather than mixing parsing logic with API code.
+
+# 14. Automatic script mode detection
+
+Optional but recommended:
+
+Auto Detect Script Type.
+
+If the TXT contains speaker tags such as:
+
+[ANNA]
+[TOM]
+
+automatically suggest Conversation Mode.
+
+Otherwise suggest Story Mode.
+
+User must still be able to manually override the mode.
+
+# 15. Per-folder settings
+
+This is important for large teaching projects.
+
+Allow an optional configuration file inside a folder, for example:
+
+tts_config.json
+
+Example:
+
+lesson1
+    tts_config.json
+    dialogue1.txt
+    dialogue2.txt
+
+This configuration could define:
+
+- mode
+- narrator voice
+- speaker voice mappings
+- speed
+- silence
+- output format
+
+Files in that folder should inherit the profile.
+
+Subfolders may optionally inherit the parent's configuration unless they contain their own configuration.
+
+# 16. Queue system
+
+Create a proper job queue.
+
+Table columns:
+
+- Checkbox
+- File
+- Folder
+- Mode
+- Profile
+- Voice / Voices
+- Duration if known
+- Progress
+- Status
+- Error
+
+Allow:
+
+- Select all
+- Select none
+- Select failed
+- Remove selected
+- Retry selected
+
+# 17. Progress display
+
+Show:
+
+Overall Progress:
+32 / 120 files
+
+Current File:
+lesson03\story7.txt
+
+Progress:
+68%
+
+Also display:
+
+- Successfully completed
+- Failed
+- Skipped
+- Remaining
+
+# 18. Existing MP3 behavior
+
+Before batch generation provide an option:
+
+If output MP3 already exists:
+
+- Skip
+- Overwrite
+- Ask
+- Generate with suffix
+
+Example suffix:
+
+story1_001.mp3
+
+Default:
+Skip
+
+This prevents accidentally regenerating hundreds of completed files.
+
+# 19. Resume interrupted batch
+
+Implement batch session persistence.
+
+If the application closes unexpectedly or Windows restarts, the user should be able to reopen the application and continue unfinished jobs.
+
+Save queue state periodically.
+
+Completed files should not have to regenerate.
+
+# 20. Retry system
+
+If API generation fails:
+
+Retry automatically.
+
+Default:
+3 retries.
+
+Use increasing retry delays.
+
+Example:
+
+1 second
+3 seconds
+5 seconds
+
+After final failure:
+
+mark the item as Failed
+
+and continue processing other files.
+
+One failed TXT file must never stop the entire batch.
+
+# 21. Log system
+
+Create logs.
+
+Example:
+
+logs
+    app.log
+    batch_2026-10-07.log
+
+Log:
+
+- API requests without exposing sensitive information
+- source file
+- selected model
+- selected voice
+- generation start
+- generation completion
+- elapsed time
+- output file
+- API errors
+- retry events
+- merge errors
+
+Add GUI button:
+
+Open Logs Folder
+
+# 22. Error report
+
+After a batch finishes, show summary:
+
+Completed: 115
+Failed: 3
+Skipped: 2
+
+Allow export:
+
+batch_report.csv
+
+with:
+
+File
+Input path
+Output path
+Voice
+Model
+Status
+Error
+Processing time
+
+# 23. Audio formats
+
+Primary output:
+
+MP3
+
+If AudioStudio supports other formats, optionally allow:
+
+- WAV
+- MP3
+- FLAC
+
+If AudioStudio returns WAV but MP3 is requested, convert locally.
+
+Never reduce audio quality unnecessarily.
+
+Provide MP3 quality setting if conversion is needed:
+
+128 kbps
+192 kbps
+256 kbps
+320 kbps
+
+Default:
+192 kbps
+
+# 24. File naming
+
+Default:
+
+source:
+story1.txt
+
+output:
+story1.mp3
+
+Preserve Unicode file names.
+
+Example:
+
+Bài đọc số 1.txt
+
+becomes:
+
+Bài đọc số 1.mp3
+
+Sanitize only characters that Windows does not permit.
+
+# 25. Audio normalization
+
+Optional setting:
+
+Normalize output volume
+
+If enabled, normalize final merged audio consistently.
+
+Do not dramatically compress or distort the audio.
+
+# 26. Text preprocessing
+
+Create a preprocessing layer before sending text to AudioStudio.
+
+Possible optional settings:
+
+- trim duplicate spaces
+- normalize line endings
+- remove unwanted blank lines
+- preserve punctuation
+- convert special quotation marks
+- replace custom abbreviations
+- custom pronunciation dictionary
+
+Do not automatically alter user text in a way that changes meaning.
+
+# 27. Pronunciation dictionary
+
+Add optional replacement rules.
+
+Example:
+
+WSC -> World Scholar's Cup
+EC -> E C
+PECC1 -> P E C C One
+
+Allow users to define:
+
+Original text
+Replacement / spoken form
+
+Store pronunciation rules in JSON.
+
+Allow:
+
+- Global rules
+- Profile-specific rules
+
+# 28. Text preview
+
+Before generating, user should be able to double-click a TXT file in the queue and see:
+
+- Original text
+- Processed text
+- Detected speakers
+- Selected voices
+
+Do not modify the original TXT file unless explicitly requested.
+
+# 29. API adapter architecture
+
+Use an architecture similar to:
+
+app/
+    main.py
+    ui/
+    core/
+        batch_manager.py
+        job.py
+        settings.py
+        profiles.py
+    api/
+        base_tts_adapter.py
+        audiostudio_adapter.py
+    parsers/
+        story_parser.py
+        conversation_parser.py
+    audio/
+        merger.py
+        converter.py
+        player.py
+    utils/
+        file_scanner.py
+        text_splitter.py
+        logger.py
+    resources/
+
+Create an interface such as:
+
+BaseTTSAdapter
+
+with methods similar to:
+
+connect()
+health_check()
+get_models()
+get_voices()
+get_capabilities(model)
+generate(text, voice, parameters)
+cancel()
+
+The exact implementation of AudioStudioAdapter must follow the REAL local API.
+
+Do not make up endpoints.
+
+# 30. Capability detection
+
+Different AudioStudio models may support different settings.
+
+Build capability-based UI.
+
+For example:
+
+Model A:
+voice + speed only
+
+Model B:
+voice + emotion + temperature
+
+Model C:
+multi-speaker
+
+The GUI should automatically enable or disable controls based on actual supported capabilities.
+
+# 31. Performance
+
+Do not freeze the GUI.
+
+All generation must happen in worker threads.
+
+Allow concurrency setting:
+
+Concurrent Jobs:
+1
+2
+3
+4
+
+Default:
+1
+
+Because local GPU TTS can use significant VRAM.
+
+Warn the user that increasing concurrency may increase GPU memory use.
+
+Do not automatically use multiple concurrent jobs unless selected.
+
+# 32. GPU/server protection
+
+If API returns:
+
+- out of memory
+- CUDA OOM
+- server unavailable
+- timeout
+
+show a clear human-readable error.
+
+For GPU memory errors, suggest:
+
+- decrease concurrency
+- restart TTS backend
+- use shorter chunks
+
+Do not endlessly retry GPU OOM errors.
+
+# 33. Chunk configuration
+
+Allow advanced users to configure:
+
+Max characters per chunk
+
+or token limit when the API exposes token constraints.
+
+Default should be determined safely from the active model/API when possible.
+
+Also expose:
+
+Minimum chunk size
+Sentence-aware splitting
+
+# 34. Main GUI layout
+
+Suggested GUI:
+
+LEFT SIDEBAR
+
+Dashboard
+Generate
+Batch Folder
+Profiles
+Voices
+Pronunciation
+Settings
+Logs
+
+MAIN DASHBOARD
+
+AudioStudio:
+● Connected
+
+Model:
+[ dropdown ]
+
+Profile:
+[ dropdown ]
+
+Mode:
+Story / Conversation / Auto
+
+Source:
+[ Select File ]
+[ Select Folder ]
+
+Queue table
+
+Bottom controls:
+
+[ Start ]
+[ Pause ]
+[ Resume ]
+[ Cancel ]
+
+Overall progress bar
+
+# 35. Modern UI
+
+Use a clean modern desktop design.
+
+Requirements:
+
+- Windows 10/11 compatible
+- light/dark mode
+- scalable UI
+- readable fonts
+- proper spacing
+- no oversized buttons
+- status indicators
+- tooltips for technical options
+
+Do not make it look like a developer/debugging tool.
+
+It should look like a normal end-user Windows application.
+
+# 36. Configuration persistence
+
+Remember between sessions:
+
+- API URL
+- last selected model
+- last profile
+- output settings
+- concurrency
+- last folder
+- window size
+- theme
+- retry settings
+- voice mappings
+
+Do not store temporary paths unnecessarily.
+
+# 37. Drag and drop
+
+Support dragging:
+
+- TXT files
+- folders
+
+onto the application.
+
+Dropped folders should be scanned recursively.
+
+# 38. Search and filters
+
+For large batches, add filters:
+
+Filename search
+
+Status:
+All / Pending / Completed / Failed
+
+Mode:
+Story / Conversation
+
+# 39. Safe cancellation
+
+Cancel must not corrupt already completed MP3 files.
+
+Generate temporary files first:
+
+story1.mp3.part
+
+After generation succeeds, atomically rename it:
+
+story1.mp3
+
+Remove incomplete temporary files where appropriate.
+
+# 40. Audio merge safety
+
+Conversation and story chunks should first be generated to a temporary working directory.
+
+Only create the final MP3 after all required segments have succeeded.
+
+If one segment fails:
+
+- keep job state
+- allow retry
+- avoid recreating successful segments when possible
+
+# 41. Cache
+
+Optional but strongly recommended.
+
+Create a hash based on:
+
+text
+voice
+model
+TTS parameters
+
+If the exact same segment has already been generated, optionally reuse it.
+
+Add setting:
+
+Enable audio cache
+
+This can save a large amount of generation time.
+
+Provide:
+
+Clear Cache
+
+button.
+
+# 42. Metadata
+
+Optionally write MP3 metadata:
+
+Title = TXT filename
+Comment = generated by application
+
+Never overwrite metadata the user provides unless explicitly enabled.
+
+# 43. EXE packaging
+
+The final app must be distributable on Windows.
+
+Provide:
+
+build.bat
+
+and preferably:
+
+build.ps1
+
+Build:
+
+dist
+    AudioStudioBatchTTS.exe
+
+If ffmpeg is required, either:
+
+- bundle the required ffmpeg executable legally with the distribution
+or
+- detect a locally installed ffmpeg
+
+The app should clearly report if ffmpeg is missing.
+
+Prefer a portable release.
+
+# 44. Application data location
+
+Do not store editable settings beside the EXE if that causes Windows permission problems.
+
+Use an appropriate location such as:
+
+%APPDATA%\AudioStudioBatchTTS\
+
+for:
+
+settings
+profiles
+logs
+cache
+session data
+
+Provide a button:
+
+Open App Data Folder
+
+# 45. Project deliverables
+
+Generate the COMPLETE working project.
+
+Do not only provide pseudo code.
+
+Create:
+
+1. Complete Python source code
+2. requirements.txt
+3. README.md
+4. build.bat
+5. build.ps1 if appropriate
+6. default settings file
+7. example profile files
+8. sample TXT story
+9. sample TXT conversation
+10. app icon placeholder
+11. tests for important parser/file functions
+12. EXE packaging instructions
+
+# 46. README
+
+README must explain:
+
+Installation
+
+Development run:
+
+python main.py
+
+AudioStudio connection setup
+
+Story TXT format
+
+Conversation TXT format
+
+Profiles
+
+Batch folder operation
+
+Recursive subfolder processing
+
+EXE build
+
+Troubleshooting
+
+# 47. Tests
+
+At minimum test:
+
+- recursive TXT scanning
+- Unicode filenames
+- story parsing
+- conversation parsing
+- speaker detection
+- safe chunk splitting
+- output path generation
+- same-folder output
+- subfolder preservation
+- skip-existing behavior
+- pronunciation replacement
+- cache key generation
+
+# 48. Code quality
+
+Requirements:
+
+- typed Python where reasonable
+- clear class structure
+- no giant main.py
+- no duplicated API logic
+- proper exception handling
+- useful comments
+- logging instead of print()
+- no hard-coded Windows paths
+- no hard-coded AudioStudio port
+- no hard-coded voice list
+
+# 49. Development order
+
+Do this in phases.
+
+PHASE 1
+Inspect AudioStudio API.
+
+Determine:
+
+- base URL
+- health endpoint
+- available models
+- available voices
+- generation endpoint
+- request format
+- response format
+- supported voice parameters
+- maximum text size
+- streaming support if any
+
+Document these findings first.
+
+PHASE 2
+Create AudioStudio API adapter and test it independently.
+
+Create a CLI test:
+
+python test_tts.py
+
+that generates a short test audio.
+
+PHASE 3
+Implement:
+
+- settings
+- profiles
+- file scanner
+- story parser
+- conversation parser
+- chunk splitter
+- output path manager
+
+PHASE 4
+Build GUI.
+
+PHASE 5
+Implement batch queue and worker system.
+
+PHASE 6
+Implement audio merging, retries, cache and resume.
+
+PHASE 7
+Package into EXE.
+
+PHASE 8
+Test with nested folders and Vietnamese/English scripts.
+
+# 50. Critical rule for AudioStudio API
+
+Before writing the AudioStudio integration:
+
+STOP and inspect the actual AudioStudio API information available in the project/environment.
+
+If insufficient information exists, clearly identify exactly what API information is missing.
+
+DO NOT silently invent API calls.
+
+However, build the rest of the program behind BaseTTSAdapter so the complete application architecture can still be developed independently.
+
+# 51. Future extensibility
+
+Although version 1 uses AudioStudio, design the app so additional local engines can later be added, for example:
+
+AudioStudio
+Kokoro
+Chatterbox
+XTTS
+F5-TTS
+other local TTS engines
+
+The user should eventually be able to select:
+
+TTS Engine
+
+without rewriting the batch processing application.
+
+Do not implement engines I have not requested yet, but make the architecture extensible.
+
+# 52. Final result
+
+My expected daily workflow should be extremely simple:
+
+1. Start AudioStudio local server.
+2. Open AudioStudio Batch TTS.
+3. The app connects to AudioStudio.
+4. Choose a saved Profile.
+5. Click "Select Folder".
+6. The app recursively finds all TXT files.
+7. Check the detected Story / Conversation modes.
+8. Click "Start".
+9. The application generates MP3 files beside the TXT files.
+10. Failed jobs can be retried without regenerating successful jobs.
+
+Prioritize:
+
+reliability
+batch processing
+correct voice assignment
+ease of use
+resume capability
+good error handling
+maintainable architecture
+
+over unnecessary visual effects.
+
+Before coding, give me:
+
+1. proposed architecture
+2. proposed folder structure
+3. application data model
+4. batch processing workflow
+5. AudioStudio API integration plan
+
+Then proceed to implement the project file by file.
+
+Do not stop after giving the architecture. Continue implementing the actual working application.

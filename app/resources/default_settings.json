@@ -1,0 +1,30 @@
+{
+  "engine_family": "audiostudio",
+  "api_base_url": "",
+  "api_discovery_candidates": [
+    "http://127.0.0.1:3900",
+    "http://localhost:3900"
+  ],
+  "timeout_s": 300,
+  "retry_count": 3,
+  "retry_delays_s": [
+    1,
+    3,
+    5
+  ],
+  "output_mode": "same_folder",
+  "custom_output_dir": "",
+  "existing_behavior": "skip",
+  "output_format": "mp3",
+  "mp3_bitrate_kbps": 192,
+  "normalize_volume": false,
+  "write_metadata": true,
+  "concurrency": 1,
+  "max_chunk_chars": 600,
+  "min_chunk_chars": 40,
+  "sentence_aware": true,
+  "cache_enabled": true,
+  "use_folder_config": true,
+  "inherit_parent_folder_config": true,
+  "theme": "light"
+}

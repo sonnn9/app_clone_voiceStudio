@@ -1,0 +1,26 @@
+{
+  "_comment": "Files in lesson1 (and its subfolders) inherit these settings.",
+  "mode": "auto",
+  "speaker_voices": {
+    "ANNA": {
+      "key": "archetype:feat_04_the_neighbor",
+      "name": "The Neighbor",
+      "instruct": "female, young adult, moderate pitch, american accent"
+    },
+    "TOM": {
+      "key": "archetype:feat_06_the_mate",
+      "name": "The Mate",
+      "instruct": "male, young adult, moderate pitch, australian accent"
+    },
+    "WAITER": {
+      "key": "archetype:feat_23_the_explainer",
+      "name": "The Explainer",
+      "instruct": "male, young adult, moderate pitch, british accent"
+    }
+  },
+  "silence": {
+    "turn_ms": 400,
+    "paragraph_ms": 700
+  },
+  "inherit_parent": true
+}
